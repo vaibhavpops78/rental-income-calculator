@@ -13,7 +13,7 @@
             text-align: center;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: auto;
             padding: 20px;
             border: 1px solid #ccc;
@@ -49,6 +49,13 @@
             border: 1px solid #ced4da;
             border-radius: 5px;
         }
+        .results-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .result-section {
+            width: 48%;
+        }
     </style>
 </head>
 <body>
@@ -61,8 +68,11 @@
     <label for="depositPercentage">Deposit Percentage (%):</label>
     <input type="number" id="depositPercentage" value="25">
     
-    <label for="mortgageRate">Mortgage Rate (%):</label>
-    <input type="number" id="mortgageRate" value="5">
+    <label for="mortgageRateIndividual">Mortgage Rate for Individual (%):</label>
+    <input type="number" id="mortgageRateIndividual" value="3">
+    
+    <label for="mortgageRateCompany">Mortgage Rate for Company (%):</label>
+    <input type="number" id="mortgageRateCompany" value="5">
     
     <label for="monthlyRent">Monthly Rent (£):</label>
     <input type="number" id="monthlyRent" value="1500">
@@ -84,8 +94,19 @@
     
     <button onclick="calculateIncome()">Calculate</button>
     
-    <div class="result" id="result">
-        <!-- Result will be displayed here -->
+    <div class="results-container">
+        <div class="result-section">
+            <h2>Individual</h2>
+            <div class="result" id="resultIndividual">
+                <!-- Result for individual will be displayed here -->
+            </div>
+        </div>
+        <div class="result-section">
+            <h2>Company</h2>
+            <div class="result" id="resultCompany">
+                <!-- Result for company will be displayed here -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -93,7 +114,8 @@
     function calculateIncome() {
         const propertyPrice = parseFloat(document.getElementById('propertyPrice').value);
         const depositPercentage = parseFloat(document.getElementById('depositPercentage').value);
-        const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
+        const mortgageRateIndividual = parseFloat(document.getElementById('mortgageRateIndividual').value) / 100;
+        const mortgageRateCompany = parseFloat(document.getElementById('mortgageRateCompany').value) / 100;
         const monthlyRent = parseFloat(document.getElementById('monthlyRent').value);
         const managementFees = parseFloat(document.getElementById('managementFees').value);
         const maintenanceCosts = parseFloat(document.getElementById('maintenanceCosts').value);
@@ -102,19 +124,35 @@
         const repairs = parseFloat(document.getElementById('repairs').value);
 
         const mortgageAmount = propertyPrice * (1 - depositPercentage / 100);
-        const monthlyMortgagePayment = (mortgageAmount * mortgageRate / 12) / (1 - Math.pow(1 + mortgageRate / 12, -25 * 12));
+        const monthlyMortgagePaymentIndividual = (mortgageAmount * mortgageRateIndividual / 12) / (1 - Math.pow(1 + mortgageRateIndividual / 12, -25 * 12));
+        const monthlyMortgagePaymentCompany = (mortgageAmount * mortgageRateCompany / 12) / (1 - Math.pow(1 + mortgageRateCompany / 12, -25 * 12));
 
-        const totalExpenses = managementFees + maintenanceCosts + insurance + voidPeriods + repairs + monthlyMortgagePayment;
-        const netMonthlyIncome = monthlyRent - totalExpenses;
-        const annualNetIncome = netMonthlyIncome * 12;
-        const roi = (annualNetIncome / (propertyPrice * (depositPercentage / 100))) * 100;
+        const totalExpensesIndividual = managementFees + maintenanceCosts + insurance + voidPeriods + repairs + monthlyMortgagePaymentIndividual;
+        const netMonthlyIncomeIndividual = monthlyRent - totalExpensesIndividual;
+        const annualNetIncomeIndividual = netMonthlyIncomeIndividual * 12;
+        const roiIndividual = (annualNetIncomeIndividual / (propertyPrice * (depositPercentage / 100))) * 100;
 
-        const resultDiv = document.getElementById('result');
-        resultDiv.innerHTML = `
-            <p>Monthly Mortgage Payment: £${monthlyMortgagePayment.toFixed(2)}</p>
-            <p>Net Monthly Income: £${netMonthlyIncome.toFixed(2)}</p>
-            <p>Annual Net Income: £${annualNetIncome.toFixed(2)}</p>
-            <p>Return on Investment (ROI): ${roi.toFixed(2)}%</p>
+        const totalExpensesCompany = managementFees + maintenanceCosts + insurance + voidPeriods + repairs + monthlyMortgagePaymentCompany;
+        const netMonthlyIncomeCompany = monthlyRent - totalExpensesCompany;
+        const annualNetIncomeCompany = netMonthlyIncomeCompany * 12;
+        const roiCompany = (annualNetIncomeCompany / (propertyPrice * (depositPercentage / 100))) * 100;
+
+        const resultIndividualDiv = document.getElementById('resultIndividual');
+        resultIndividualDiv.innerHTML = `
+            <p>Monthly Mortgage Payment: £${monthlyMortgagePaymentIndividual.toFixed(2)}</p>
+            <p>Total Monthly Expenses: £${totalExpensesIndividual.toFixed(2)}</p>
+            <p>Net Monthly Income: £${netMonthlyIncomeIndividual.toFixed(2)}</p>
+            <p>Annual Net Income: £${annualNetIncomeIndividual.toFixed(2)}</p>
+            <p>Return on Investment (ROI): ${roiIndividual.toFixed(2)}%</p>
+        `;
+
+        const resultCompanyDiv = document.getElementById('resultCompany');
+        resultCompanyDiv.innerHTML = `
+            <p>Monthly Mortgage Payment: £${monthlyMortgagePaymentCompany.toFixed(2)}</p>
+            <p>Total Monthly Expenses: £${totalExpensesCompany.toFixed(2)}</p>
+            <p>Net Monthly Income: £${netMonthlyIncomeCompany.toFixed(2)}</p>
+            <p>Annual Net Income: £${annualNetIncomeCompany.toFixed(2)}</p>
+            <p>Return on Investment (ROI): ${roiCompany.toFixed(2)}%</p>
         `;
     }
 </script>
