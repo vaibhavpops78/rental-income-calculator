@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Income Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Rental Income Calculator</h1>
+<div class="container">
+    <label for="propertyPrice">Property Price (£):</label>
+    <input type="number" id="propertyPrice" value="235000">
+    
+    <label for="depositPercentage">Deposit Percentage (%):</label>
+    <input type="number" id="depositPercentage" value="25">
+    
+    <label for="mortgageRate">Mortgage Rate (%):</label>
+    <input type="number" id="mortgageRate" value="5">
+    
+    <label for="monthlyRent">Monthly Rent (£):</label>
+    <input type="number" id="monthlyRent" value="1500">
+    
+    <label for="managementFees">Monthly Management Fees (£):</label>
+    <input type="number" id="managementFees" value="150">
+    
+    <label for="maintenanceCosts">Monthly Maintenance Costs (£):</label>
+    <input type="number" id="maintenanceCosts" value="195.83">
+    
+    <label for="insurance">Monthly Insurance (£):</label>
+    <input type="number" id="insurance" value="20">
+    
+    <label for="voidPeriods">Monthly Void Periods (£):</label>
+    <input type="number" id="voidPeriods" value="125">
+    
+    <label for="repairs">Monthly Repairs (£):</label>
+    <input type="number" id="repairs" value="50">
+    
+    <button onclick="calculateIncome()">Calculate</button>
+    
+    <div class="result" id="result">
+        <!-- Result will be displayed here -->
+    </div>
+</div>
+
+<script>
+    function calculateIncome() {
+        const propertyPrice = parseFloat(document.getElementById('propertyPrice').value);
+        const depositPercentage = parseFloat(document.getElementById('depositPercentage').value);
+        const mortgageRate = parseFloat(document.getElementById('mortgageRate').value) / 100;
+        const monthlyRent = parseFloat(document.getElementById('monthlyRent').value);
+        const managementFees = parseFloat(document.getElementById('managementFees').value);
+        const maintenanceCosts = parseFloat(document.getElementById('maintenanceCosts').value);
+        const insurance = parseFloat(document.getElementById('insurance').value);
+        const voidPeriods = parseFloat(document.getElementById('voidPeriods').value);
+        const repairs = parseFloat(document.getElementById('repairs').value);
+
+        const mortgageAmount = propertyPrice * (1 - depositPercentage / 100);
+        const monthlyMortgagePayment = (mortgageAmount * mortgageRate / 12) / (1 - Math.pow(1 + mortgageRate / 12, -25 * 12));
+
+        const totalExpenses = managementFees + maintenanceCosts + insurance + voidPeriods + repairs + monthlyMortgagePayment;
+        const netMonthlyIncome = monthlyRent - totalExpenses;
+        const annualNetIncome = netMonthlyIncome * 12;
+        const roi = (annualNetIncome / (propertyPrice * (depositPercentage / 100))) * 100;
+
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+            <p>Monthly Mortgage Payment: £${monthlyMortgagePayment.toFixed(2)}</p>
+            <p>Net Monthly Income: £${netMonthlyIncome.toFixed(2)}</p>
+            <p>Annual Net Income: £${annualNetIncome.toFixed(2)}</p>
+            <p>Return on Investment (ROI): ${roi.toFixed(2)}%</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
